@@ -5,9 +5,10 @@ import { UsersModule } from './users/users.module';
 import { EventsModule } from './events/events.module';
 import { RidesModule } from './rides/rides.module';
 import { MessagesModule } from './messages/messages.module';
+import { HousingModule } from './housing/housing.module';
 
 @Module({
-  imports: [UsersModule, EventsModule, RidesModule, MessagesModule],
+  imports: [UsersModule, EventsModule, RidesModule, MessagesModule, HousingModule],
   controllers: [AppController],
   providers: [AppService],
 })
