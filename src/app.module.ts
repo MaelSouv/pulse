@@ -7,7 +7,7 @@ import { RidesModule } from './rides/rides.module';
 import { MessagesModule } from './messages/messages.module';
 import { HousingModule } from './housing/housing.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [UsersModule, EventsModule, RidesModule, MessagesModule, HousingModule, AuthModule],
