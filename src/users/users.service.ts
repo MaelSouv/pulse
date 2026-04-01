@@ -14,17 +14,19 @@ export class UsersService {
   async findAll(): Promise<Users[]> {
     return this.repo.find();
   }
-  async findOne(username: string): Promise<User | undefined> {
-    return this.repo.findOne({ where: { username } });
+  async findOneByEmail(email: string): Promise<Users | undefined> {
+    const user = await this.repo.findOne({ where: { email } });
+    return user ?? undefined;
   }
   async findOneById(id: number): Promise<Users | undefined> {
     const user = await this.repo.findOneBy({ id });
     return user ?? undefined;
   }
-  async create(username: string, passwordHash: string): Promise<Users> {
+  async create(nom: string, email: string, passwordHash: string): Promise<Users> {
     const user = this.repo.create({
-      username,
-      password: passwordHash,
+      nom,
+      email,
+      password_hash: passwordHash,
     });
     return this.repo.save(user);
   }
