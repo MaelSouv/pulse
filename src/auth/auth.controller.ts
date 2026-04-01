@@ -20,13 +20,13 @@ export class AuthController {
   @Public()
   @Post('login')
   signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+    return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
   @Public()
   @Post('register')
   signUp(@Body() signUpDto: Record<string, any>) {
-    return this.authService.signUp(signUpDto.username, signUpDto.password);
+    return this.authService.signUp(signUpDto.nom, signUpDto.email, signUpDto.password);
   }
 
   @UseGuards(AuthGuard)

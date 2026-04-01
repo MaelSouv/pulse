@@ -14,36 +14,36 @@ export class AuthService {
   ) {}
 
   async signIn(
-    username: string,
+    email: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOne(username);
+    const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       throw new UnauthorizedException("L'utilisateur n'existe pas");
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Mot de passe incorrect');
     }
-    const payload = { id: user.id, username: user.username };
+    const payload = { id: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
 
-  async signUp(username: string, password: string): Promise<string> {
-    if (!username || !password) {
-      throw new BadRequestException('Nom ou mot de passe requis.');
+  async signUp(nom: string,email: string, password: string): Promise<string> {
+    if (!nom || !password ||!email) {
+      throw new BadRequestException('Nom, email ou mot de passe requis.');
     }
-    const verifyUserName = await this.usersService.findOne(username);
+    const verifyUserName = await this.usersService.findOneByEmail(email);
     if (verifyUserName) {
-      throw new ConflictException("Nom d'utilisateur déjà utilisé.");
+      throw new ConflictException("Cet email est déjà utilisé.");
     }
     if (password) {
       const saltOrRounds = 10;
       const hash = await bcrypt.hash(password, saltOrRounds);
-      const newUser = this.usersService.create( username,hash,);
-      return 'Utilisateur ' + username + ' créé avec succès.';
+      await this.usersService.create(nom, email, hash);
+      return 'Utilisateur ' + nom + ' créé avec succès.';
     }
     return "Erreur lors de la création de l'utilisateur.";
   }
