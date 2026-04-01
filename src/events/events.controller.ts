@@ -1,9 +1,19 @@
-import {Controller, Get, Post, Body, Put, Param, Delete, Request, HttpCode, HttpStatus, ParseIntPipe} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Événements')
 @ApiBearerAuth()
@@ -11,15 +21,13 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@ne
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  //@Post()
-  //create(@Body() createEventDto: CreateEventDto) {
-    //@ApiOperation({ summary: 'Créer un événement' })
-    //@ApiResponse({ status: 201, description: 'Événement créé avec succès.' })
-    //@ApiResponse({ status: 400, description: 'Données invalides.' })
-    //create(@Body() dto: CreateEventDto, @Request() req: any) {
-    //return this.eventsService.create(dto, req.user.id);
-  //}
-  // }
+  @Post()
+  @ApiOperation({ summary: 'Créer un événement' })
+  @ApiResponse({ status: 201, description: 'Événement créé avec succès.' })
+  @ApiResponse({ status: 400, description: 'Données invalides.' })
+  create(@Body() dto: CreateEventDto) {
+    return this.eventsService.create(dto, 1);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Lister tous les événements' })
@@ -31,7 +39,7 @@ export class EventsController {
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer un événement par son ID' })
   @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Détail de l\'événement.' })
+  @ApiResponse({ status: 200, description: "Détail de l'événement." })
   @ApiResponse({ status: 404, description: 'Événement introuvable.' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.eventsService.findOne(id);
@@ -46,9 +54,8 @@ export class EventsController {
   update(
       @Param('id', ParseIntPipe) id: number,
       @Body() dto: UpdateEventDto,
-      @Request() req: any,
   ) {
- //   return this.eventsService.update(id, dto, req.user.id);
+    return this.eventsService.update(id, dto, 1);
   }
 
   @Delete(':id')
@@ -56,9 +63,8 @@ export class EventsController {
   @ApiOperation({ summary: 'Supprimer un événement' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Événement supprimé.' })
-  @ApiResponse({ status: 403, description: 'Accès refusé.' })
   @ApiResponse({ status: 404, description: 'Événement introuvable.' })
-  remove(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
-  //  return this.eventsService.remove(id, req.user.id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.eventsService.remove(id, 1);
   }
 }

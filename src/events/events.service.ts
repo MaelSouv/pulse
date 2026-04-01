@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  constructor(
+      @InjectRepository(Event)
+      private readonly eventsRepository: Repository<Event>,
+  ) {}
+
+  create(dto: CreateEventDto, organizerId: number): Promise<Event> {
+    const event = this.eventsRepository.create({
+      ...dto,
+      date: new Date(dto.date),
+      organizerId,
+    });
+    return this.eventsRepository.save(event);
   }
 
-  findAll() {
-    return `This action returns all events`;
+  findAll(): Promise<Event[]> {
+    return this.eventsRepository.find({ order: { date: 'ASC' } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
+  async findOne(id: number): Promise<Event> {
+    const event = await this.eventsRepository.findOne({ where: { id } });
+    if (!event) {
+      throw new NotFoundException(`Événement #${id} introuvable.`);
+    }
+    return event;
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
+  async update(id: number, dto: UpdateEventDto, requesterId: number): Promise<Event> {
+    const event = await this.findOne(id);
+    this.assertOrganizer(event, requesterId);
+    const updated = this.eventsRepository.merge(event, {
+      ...dto,
+      ...(dto.date && { date: new Date(dto.date) }),
+    });
+    return this.eventsRepository.save(updated);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async remove(id: number, requesterId: number): Promise<{ message: string }> {
+    const event = await this.findOne(id);
+    this.assertOrganizer(event, requesterId);
+    await this.eventsRepository.remove(event);
+    return { message: `Événement #${id} supprimé avec succès.` };
+  }
+
+  private assertOrganizer(event: Event, requesterId: number): void {
+    if (event.organizerId !== requesterId) {
+      throw new ForbiddenException("Seul l'organisateur peut modifier ou supprimer cet événement.");
+    }
   }
 }
