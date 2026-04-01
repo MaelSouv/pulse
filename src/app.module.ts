@@ -10,25 +10,29 @@ import { HousingModule } from './housing/housing.module';
 import { AuthModule } from './auth/auth.module';
 import { Event } from './events/entities/event.entity';
 
+
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'pulse',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT!),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
-    UsersModule,
-    EventsModule,
-    RidesModule,
-    MessagesModule,
-    HousingModule,
-    AuthModule,
-  ],
+    UsersModule, 
+    EventsModule, 
+    RidesModule, 
+    MessagesModule, 
+    HousingModule, 
+    AuthModule],
+  
   controllers: [AppController],
   providers: [AppService],
 })

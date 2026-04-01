@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, 
+         UnauthorizedException, 
+         BadRequestException, 
+         ConflictException } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
+
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException("L'utilisateur n'existe pas");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Mot de passe incorrect');
+    }
+    const payload = { id: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async signUp(nom: string,email: string, password: string): Promise<string> {
+    if (!nom || !password ||!email) {
+      throw new BadRequestException('Nom, email ou mot de passe requis.');
+    }
+    const verifyUserName = await this.usersService.findOneByEmail(email);
+    if (verifyUserName) {
+      throw new ConflictException("Cet email est déjà utilisé.");
+    }
+    if (password) {
+      const saltOrRounds = 10;
+      const hash = await bcrypt.hash(password, saltOrRounds);
+      await this.usersService.create(nom, email, hash);
+      return 'Utilisateur ' + nom + ' créé avec succès.';
+    }
+    return "Erreur lors de la création de l'utilisateur.";
   }
 }
