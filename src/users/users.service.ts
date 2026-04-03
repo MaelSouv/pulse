@@ -22,11 +22,12 @@ export class UsersService {
     const user = await this.repo.findOneBy({ id });
     return user ?? undefined;
   }
-  async create(nom: string, email: string, passwordHash: string): Promise<Users> {
+  async create(nom: string, email: string, passwordHash: string, phone: string): Promise<Users> {
     const user = this.repo.create({
       nom,
       email,
       password_hash: passwordHash,
+      phone,
     });
     return this.repo.save(user);
   }

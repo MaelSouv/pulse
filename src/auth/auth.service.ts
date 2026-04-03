@@ -31,8 +31,8 @@ export class AuthService {
     };
   }
 
-  async signUp(nom: string,email: string, password: string): Promise<string> {
-    if (!nom || !password ||!email) {
+  async signUp(nom: string,email: string, password: string, phone: string): Promise<string> {
+    if (!nom || !password ||!email || !phone) {
       throw new BadRequestException('Nom, email ou mot de passe requis.');
     }
     const verifyUserName = await this.usersService.findOneByEmail(email);
@@ -42,7 +42,7 @@ export class AuthService {
     if (password) {
       const saltOrRounds = 10;
       const hash = await bcrypt.hash(password, saltOrRounds);
-      await this.usersService.create(nom, email, hash);
+      await this.usersService.create(nom, email, hash, phone);
       return 'Utilisateur ' + nom + ' créé avec succès.';
     }
     return "Erreur lors de la création de l'utilisateur.";
