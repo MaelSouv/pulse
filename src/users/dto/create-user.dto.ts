@@ -13,4 +13,8 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: "L'email est requis" })
   email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: "Le numéro de téléphone est requis" })
+  phone: string;
 }

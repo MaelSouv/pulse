@@ -30,7 +30,7 @@ export class AuthController {
   @Public()
   @Post('register')
   signUp(@Body() signUpDto: Record<string, any>) {
-    return this.authService.signUp(signUpDto.nom, signUpDto.email, signUpDto.password);
+    return this.authService.signUp(signUpDto.nom, signUpDto.email, signUpDto.password, signUpDto.phone);
   }
 
   @UseGuards(AuthGuard)
