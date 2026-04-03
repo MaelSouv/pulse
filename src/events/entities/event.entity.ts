@@ -16,7 +16,7 @@ import {
 @Entity('events')
 export class Event {
     @PrimaryGeneratedColumn()
-    id: number;
+    id_events: number;
 
     @Column({ length: 150 })
     title: string;
@@ -24,20 +24,17 @@ export class Event {
     @Column({ type: 'text', nullable: true })
     description: string;
 
-    @Column({ type: 'timestamp' })
-    date: Date;
-
     @Column({ length: 255 })
     location: string;
 
-    @Column({ length: 80, nullable: true })
-    category: string;
+    @Column({ type: "datetime", nullable: true })
+    start_date: datetime;
+
+    @Column({ type: 'datetime', nullable: true })
+    end_date: date;
 
     @Column({ type: 'int', default: 0 })
-    capacity: number;
-
-    @Column({ name: 'organizer_id' })
-    organizerId: number;
+    id_commune: number;
 
     //@ManyToOne(() => User, (user) => user.events, { onDelete: 'CASCADE' })
     //@JoinColumn({ name: 'organizer_id' })
