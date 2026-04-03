@@ -23,7 +23,11 @@ export class CreateEventDto {
 
     @ApiProperty({ example: '2025-06-14 22:00' })
     @IsDateString()
-    date: string;
+    start_date: string;
+
+    @ApiProperty({ example: '2025-08-14 03:00' })
+    @IsDateString()
+    end_date: string;
 
     @ApiProperty({ example: 'Rennes' })
     @IsString()

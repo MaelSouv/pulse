@@ -36,6 +36,9 @@ export class Event {
     @Column({ type: 'int', default: 0 })
     id_commune: number;
 
+    @Column()
+    organizerId: number;
+
     //@ManyToOne(() => User, (user) => user.events, { onDelete: 'CASCADE' })
     //@JoinColumn({ name: 'organizer_id' })
     //organizer: User;

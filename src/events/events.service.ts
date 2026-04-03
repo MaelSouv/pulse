@@ -18,19 +18,22 @@ export class EventsService {
 
   create(dto: CreateEventDto, organizerId: number): Promise<Event> {
     const event = this.eventsRepository.create({
-      ...dto,
-      date: new Date(dto.date),
-      organizerId,
+      title: dto.title,
+      description: dto.description,
+      location: dto.location,
+      start_date: new Date(dto.start_date),
+      end_date: new Date(dto.end_date),
+      organizerId: organizerId,
     });
     return this.eventsRepository.save(event);
   }
 
   findAll(): Promise<Event[]> {
-    return this.eventsRepository.find({ order: { date: 'ASC' } });
+    return this.eventsRepository.find({ order: { start_date: 'ASC' } });
   }
 
   async findOne(id: number): Promise<Event> {
-    const event = await this.eventsRepository.findOne({ where: { id } });
+    const event = await this.eventsRepository.findOne({ where: { id_events: id } });
     if (!event) {
       throw new NotFoundException(`Événement #${id} introuvable.`);
     }
@@ -42,7 +45,8 @@ export class EventsService {
     this.assertOrganizer(event, requesterId);
     const updated = this.eventsRepository.merge(event, {
       ...dto,
-      ...(dto.date && { date: new Date(dto.date) }),
+      ...(dto.start_date && { start_date: new Date(dto.start_date) }),
+      ...(dto.end_date && { end_date: new Date(dto.end_date) }),
     });
     return this.eventsRepository.save(updated);
   }
