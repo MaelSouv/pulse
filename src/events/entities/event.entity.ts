@@ -51,10 +51,4 @@ export class Event {
 
     //@OneToMany(() => Ride, (r) => r.event)
     //rides: Ride[];
-
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
 }
