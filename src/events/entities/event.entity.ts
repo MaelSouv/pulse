@@ -28,10 +28,10 @@ export class Event {
     location: string;
 
     @Column({ type: "datetime", nullable: true })
-    start_date: datetime;
+    start_date: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    end_date: date;
+    end_date: Date;
 
     @Column({ type: 'int', default: 0 })
     id_commune: number;
