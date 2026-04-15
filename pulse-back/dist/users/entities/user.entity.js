@@ -23,7 +23,7 @@ __decorate([
     __metadata("design:type", String)
 ], Users.prototype, "nom", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'email', unique: true }),
+    (0, typeorm_1.Column)({ name: 'email', unique: true, length: 190 }),
     __metadata("design:type", String)
 ], Users.prototype, "email", void 0);
 __decorate([
